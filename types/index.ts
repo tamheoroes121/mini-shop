@@ -19,7 +19,6 @@ export type Product = {
 export type CartLine = { productId: string; quantity: number };
 export type Role = "customer" | "admin";
 export type User = { id: string; name: string; email: string; role: Role };
-export type StoredUser = User & { password: string };
 
 export type CustomerInfo = {
   fullName: string;
@@ -30,7 +29,7 @@ export type CustomerInfo = {
   payment: "cod";
 };
 
-export type OrderStatus = "Đã ghi nhận" | "Đang xử lý" | "Đã giao" | "Đã hủy";
+export type OrderStatus = "Mới" | "Đang giao" | "Đã giao" | "Đã hủy";
 export type Order = {
   code: string;
   createdAt: string;

@@ -3,12 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "@/contexts/StoreContext";
-import { getProductById } from "@/data/products";
 import { formatCurrency, shippingFor } from "@/lib/format";
 
 export default function CartPage() {
-  const { cart, hydrated, updateQuantity, removeFromCart } = useStore();
-  const lines = cart.flatMap((line) => { const product = getProductById(line.productId); return product ? [{ ...line, product }] : []; });
+  const { cart, hydrated, products, updateQuantity, removeFromCart } = useStore();
+  const lines = cart.flatMap((line) => { const product = products.find((item) => item.id === line.productId); return product ? [{ ...line, product }] : []; });
   const subtotal = lines.reduce((sum, line) => sum + line.product.price * line.quantity, 0);
   const shipping = shippingFor(subtotal);
   if (!hydrated) return <main className="container cart-main"><p className="empty-results">Đang tải giỏ hàng...</p></main>;

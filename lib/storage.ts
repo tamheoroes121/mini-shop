@@ -1,8 +1,6 @@
 export const storageKeys = {
   cart: "moc-nhien-cart-v1",
   wishlist: "moc-nhien-wishlist-v1",
-  users: "moc-nhien-users-v1",
-  session: "moc-nhien-session-v1",
   orders: "moc-nhien-orders-v1",
 } as const;
 

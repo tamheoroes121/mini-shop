@@ -18,7 +18,7 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
   const { cartCount, wishlistCount } = useStore();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const submitSearch = (event: FormEvent) => {
     event.preventDefault();
@@ -43,7 +43,7 @@ export function SiteHeader() {
             <input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Tìm sản phẩm..." aria-label="Tìm sản phẩm" />
             <SearchIcon />
           </form>
-          <Link className="icon-button account-link" href={user?.role === "admin" ? "/admin" : user ? "/login?logout=1" : "/login"} aria-label={user ? `${user.name} — ${user.role === "admin" ? "Khu quản trị" : "Đăng xuất"}` : "Đăng nhập"}><UserIcon />{user && <span className="signed-in-dot" />}</Link>
+          {user ? <div className="account-session"><Link className="icon-button account-link account-link--signed-in" href={user.role === "admin" ? "/admin" : "/"} aria-label={user.role === "admin" ? "Mở khu quản trị" : "Tài khoản đang đăng nhập"}><UserIcon /><span className="account-name">{user.name}</span></Link><button className="header-signout" type="button" onClick={async () => { await logout(); router.push("/"); }}>Đăng xuất</button></div> : <Link className="icon-button account-link" href="/login" aria-label="Đăng nhập"><UserIcon /></Link>}
           <Link className="icon-button wishlist-link" href="/wishlist" aria-label="Mở danh sách yêu thích"><HeartIcon /><span className="wishlist-count">{wishlistCount}</span></Link>
           <Link className="icon-button" href="/cart" aria-label="Mở giỏ hàng"><CartIcon /><span className="cart-count">{cartCount}</span></Link>
         </div>
