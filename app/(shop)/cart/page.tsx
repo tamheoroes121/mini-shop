@@ -1,0 +1,16 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { useStore } from "@/contexts/StoreContext";
+import { getProductById } from "@/data/products";
+import { formatCurrency, shippingFor } from "@/lib/format";
+
+export default function CartPage() {
+  const { cart, hydrated, updateQuantity, removeFromCart } = useStore();
+  const lines = cart.flatMap((line) => { const product = getProductById(line.productId); return product ? [{ ...line, product }] : []; });
+  const subtotal = lines.reduce((sum, line) => sum + line.product.price * line.quantity, 0);
+  const shipping = shippingFor(subtotal);
+  if (!hydrated) return <main className="container cart-main"><p className="empty-results">Đang tải giỏ hàng...</p></main>;
+  return <main className="container cart-main"><nav className="breadcrumb"><Link href="/">Trang chủ</Link><span>/</span><span>Giỏ hàng</span></nav><div className="cart-title-row"><div><p className="eyebrow">Đơn hàng của bạn</p><h1>Giỏ hàng</h1></div><Link className="text-link" href="/products">Tiếp tục mua sắm <span>→</span></Link></div><div className="cart-layout"><section className="cart-items-panel"><div className="cart-panel-heading"><h2>Sản phẩm</h2><span>{cart.reduce((sum, item) => sum + item.quantity, 0)} sản phẩm</span></div>{lines.length ? <div className="cart-items">{lines.map(({ product, quantity }) => <article className="cart-item" key={product.id}><Link className="cart-item__image" href={`/products/${product.slug}`}><Image src={product.image} alt={product.name} width={105} height={92} /></Link><div className="cart-item__info"><h3>{product.name}</h3><p>{formatCurrency(product.price)}</p><button className="remove-item" type="button" onClick={() => removeFromCart(product.id)}>Xóa</button></div><div className="cart-quantity"><button type="button" onClick={() => updateQuantity(product.id, quantity - 1)}>−</button><output>{quantity}</output><button type="button" onClick={() => updateQuantity(product.id, quantity + 1)}>+</button></div><strong className="cart-line-total">{formatCurrency(product.price * quantity)}</strong></article>)}</div> : <div className="empty-cart"><h2>Giỏ hàng đang trống</h2><p>Hãy khám phá những món đồ thủ công dành cho không gian của bạn.</p><Link className="button button--primary" href="/products">Xem sản phẩm</Link></div>}</section><aside className="order-summary"><h2>Tóm tắt đơn hàng</h2><dl><div><dt>Tạm tính</dt><dd>{formatCurrency(subtotal)}</dd></div><div><dt>Phí giao hàng</dt><dd>{shipping ? formatCurrency(shipping) : "Miễn phí"}</dd></div><div className="summary-total"><dt>Tổng cộng</dt><dd>{formatCurrency(subtotal + shipping)}</dd></div></dl><p className="shipping-note">{subtotal > 0 && subtotal < 500000 ? `Mua thêm ${formatCurrency(500000 - subtotal)} để được miễn phí giao hàng.` : "Miễn phí giao hàng cho đơn từ 500.000đ."}</p>{lines.length ? <Link className="checkout-button" href="/checkout">Tiến hành thanh toán</Link> : <button className="checkout-button" disabled>Tiến hành thanh toán</button>}</aside></div></main>;
+}
