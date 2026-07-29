@@ -2,15 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { categories } from "@/data/categories";
-import { products } from "@/data/products";
 import { normalizeText } from "@/lib/format";
-import type { CategoryId } from "@/types";
+import type { CategoryId, Product } from "@/types";
 import { ProductCard } from "./ProductCard";
 
 type PriceRange = "all" | "under300" | "300to600" | "over600";
 type SortMode = "featured" | "price-asc" | "price-desc" | "name";
 
-export function ProductCatalog({ initialQuery = "" }: { initialQuery?: string }) {
+export function ProductCatalog({ initialQuery = "", products }: { initialQuery?: string; products: Product[] }) {
   const [category, setCategory] = useState<"all" | CategoryId>("all");
   const [priceRange, setPriceRange] = useState<PriceRange>("all");
   const [inStockOnly, setInStockOnly] = useState(false);
