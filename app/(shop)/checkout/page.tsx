@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { useStore } from "@/contexts/StoreContext";
 import { formatCurrency, shippingFor } from "@/lib/format";
+import { supabaseBrowser } from "@/lib/supabase/browser";
 import type { CustomerInfo } from "@/types";
 
 export default function CheckoutPage() {
@@ -32,9 +33,17 @@ export default function CheckoutPage() {
     const customer = Object.fromEntries(form.entries()) as unknown as CustomerInfo;
 
     try {
+      const { data: { session }, error: sessionError } = await supabaseBrowser.auth.getSession();
+      if (sessionError || !session?.access_token) {
+        throw new Error("Bạn cần đăng nhập trước khi đặt hàng.");
+      }
+
       const response = await fetch("/api/orders", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           customer,
           items: lines.map(({ product, quantity }) => ({ productId: product.id, quantity })),

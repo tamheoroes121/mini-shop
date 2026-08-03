@@ -17,6 +17,11 @@ type RpcResult = Array<{ order_code: string; order_total: number }>;
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+  const authorization = request.headers.get("authorization");
+  if (!authorization?.startsWith("Bearer ")) {
+    return NextResponse.json({ error: "Bạn cần đăng nhập trước khi đặt hàng." }, { status: 401 });
+  }
+
   let payload: CheckoutRequest;
 
   try {
@@ -38,6 +43,7 @@ export async function POST(request: Request) {
       method: "POST",
       headers: {
         apikey: publishableKey,
+        Authorization: authorization,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
