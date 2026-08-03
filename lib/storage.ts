@@ -1,7 +1,6 @@
 export const storageKeys = {
   cart: "moc-nhien-cart-v1",
   wishlist: "moc-nhien-wishlist-v1",
-  orders: "moc-nhien-orders-v1",
 } as const;
 
 export function readStorage<T>(key: string, fallback: T): T {
